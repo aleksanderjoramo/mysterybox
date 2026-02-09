@@ -1,122 +1,141 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feil</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: black;
-      color: #ccc;
-      font-family: monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404</title>
 
-    .screen {
-      text-align: center;
-      padding: 20px;
-      max-width: 90%;
-    }
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: black;
+  color: #bbb;
+  font-family: monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
 
-    .glitch {
-      font-size: 1.2rem;
-      animation: flicker 0.15s infinite;
-    }
+.screen {
+  text-align: center;
+  max-width: 90%;
+}
 
-    @keyframes flicker {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
+.hidden { display: none; }
 
-    .hidden {
-      display: none;
-    }
+.glitch {
+  animation: glitch 0.12s infinite;
+}
 
-    input {
-      margin-top: 15px;
-      padding: 10px;
-      width: 80%;
-      max-width: 250px;
-      background: #000;
-      border: 1px solid #555;
-      color: #fff;
-      font-size: 1rem;
-    }
+@keyframes glitch {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
 
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #111;
-      border: 1px solid #666;
-      color: #fff;
-      cursor: pointer;
-    }
+input, button {
+  margin-top: 15px;
+  padding: 10px;
+  width: 80%;
+  max-width: 260px;
+  background: #000;
+  border: 1px solid #555;
+  color: #fff;
+  font-size: 1rem;
+}
 
-    .error {
-      color: #a33;
-      margin-top: 10px;
-    }
+button {
+  cursor: pointer;
+}
 
-    .solution {
-      font-size: 2rem;
-      letter-spacing: 4px;
-      margin-top: 20px;
-      color: #eee;
-    }
-  </style>
+.error {
+  color: #a00;
+  margin-top: 10px;
+}
+
+.shake {
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.solution {
+  font-size: 2.2rem;
+  letter-spacing: 6px;
+  margin-top: 25px;
+  color: #eee;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- ØDELAGT SKJERM -->
-  <div class="screen" id="broken">
-    <div class="glitch">SYSTEMFEIL 0x00013</div>
-    <p>Kan ikke laste inn innhold.</p>
-    <p>Datakorrupsjon oppdaget…</p>
-    <p>Forsøker gjenoppretting…</p>
-  </div>
+<!-- FALSK 404 -->
+<div class="screen glitch" id="fake404">
+  <h1>404</h1>
+  <p>Siden finnes ikke.</p>
+</div>
 
-  <!-- EKTE INNHOLD -->
-  <div class="screen hidden" id="real">
-    <h1>Låst</h1>
-    <p>Skriv inn passordet.</p>
+<!-- SYSTEMFEIL -->
+<div class="screen hidden glitch" id="system">
+  <p>SYSTEMFEIL</p>
+  <p>Uautorisert tilgang oppdaget</p>
+  <p>Gjenoppretter…</p>
+</div>
 
-    <input type="password" id="password" placeholder="Passord" />
-    <br />
-    <button onclick="checkPassword()">Åpne</button>
+<!-- PASSORD -->
+<div class="screen hidden" id="lock">
+  <h1>TILGANG NEKTET</h1>
+  <p>Skriv inn passordet.</p>
+  <input type="password" id="password" placeholder="Passord">
+  <br>
+  <button onclick="check()">BEKREFT</button>
+  <div class="error" id="error"></div>
+</div>
 
-    <div class="error" id="error"></div>
-  </div>
+<script>
+let attempts = 0;
 
-  <script>
-    // Fake reparasjon
-    setTimeout(() => {
-      document.getElementById("broken").classList.add("hidden");
-      document.getElementById("real").classList.remove("hidden");
-      document.title = "Adgang krever passord";
-    }, 4000);
+setTimeout(() => {
+  fake404.classList.add("hidden");
+  system.classList.remove("hidden");
+}, 2500);
 
-    function checkPassword() {
-      const input = document.getElementById("password").value.toLowerCase();
-      const error = document.getElementById("error");
-      const real = document.getElementById("real");
+setTimeout(() => {
+  system.classList.add("hidden");
+  lock.classList.remove("hidden");
+  document.title = "Adgang sperret";
+}, 5000);
 
-      if (input === "treplanke") {
-        real.innerHTML = `
-          <h1>Tilgang gitt</h1>
-          <p>Løsningsord:</p>
-          <div class="solution">KJELLER</div>
-        `;
-      } else {
-        error.textContent = "Feil passord. Systemet avviser deg.";
-      }
-    }
-  </script>
+function check() {
+  const val = password.value.toLowerCase();
+  attempts++;
+  lock.classList.add("shake");
+  setTimeout(()=>lock.classList.remove("shake"),300);
+
+  if (val === "treplanke") {
+    lock.innerHTML = `
+      <h1>…</h1>
+      <p>Tilgang innvilges.</p>
+      <div class="solution">KJELLER</div>
+    `;
+    document.title = "Åpnet";
+  } else {
+    error.textContent =
+      attempts >= 3
+      ? "Systemet overvåker deg."
+      : "Feil passord.";
+  }
+}
+</script>
 
 </body>
 </html>
